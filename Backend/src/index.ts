@@ -4,6 +4,8 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 
 
+
+
 // Assuming your env.js exports strings. 
 import { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } from './config/env';
 
