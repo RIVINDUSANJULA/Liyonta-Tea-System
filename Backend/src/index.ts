@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import mysql, { PoolOptions, RowDataPacket } from 'mysql2';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import axios from 'axios';
+
 
 // Assuming your env.js exports strings. 
 import { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } from './config/env';
@@ -176,9 +176,14 @@ app.post('/api/Ordersadd', async (req: Request<{}, {}, OrderAddBody>, res: Respo
     });
 
     try {
-        axios.post(loginUrl, loginData, { headers: loginHeaders })
+        fetch(loginUrl, {
+            method: 'POST',
+            headers: loginHeaders,
+            body: JSON.stringify(loginData)
+        })
+            .then(res => res.json())
             .then((loginResponse: any) => {
-                const accessToken = loginResponse.data.accessToken;
+                const accessToken = loginResponse.accessToken;
                 const headers = {
                     'Content-Type': 'application/json',
                     'Accept': '*/*',
@@ -195,9 +200,14 @@ app.post('/api/Ordersadd', async (req: Request<{}, {}, OrderAddBody>, res: Respo
                 };
 
                 // Send SMS using obtained access token
-                axios.post(smsUrl, smsData, { headers })
-                    .then((response: any) => {
-                        console.log('Response:', response.data);
+                fetch(smsUrl, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(smsData)
+                })
+                    .then(res => res.json())
+                    .then((responseData: any) => {
+                        console.log('Response:', responseData);
                     })
                     .catch((error: any) => {
                         console.error('Error:', error);
