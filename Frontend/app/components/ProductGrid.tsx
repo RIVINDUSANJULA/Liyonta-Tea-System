@@ -89,7 +89,8 @@ export default function ProductGrid() {
         price: p.productprice,
         category: p.category_id.toString(), // Simplified for now
         image: p.url, // Assuming url is just the filename or full path
-        popularity: p.productstock, // Using stock as a proxy for popularity
+        popularity: p.productstock,
+        weight: p.Weight,
       }));
       dispatch({ type: 'SET_PRODUCTS', payload: mappedProducts });
     }
