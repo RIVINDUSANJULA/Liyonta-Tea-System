@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import useSWR from 'swr';
+import useSWR from '../lib/useSWRFallback';
 import { fetcher } from '../lib/api';
 
 export function useShippingFee(weight: number) {

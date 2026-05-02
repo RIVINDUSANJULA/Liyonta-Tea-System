@@ -1,6 +1,6 @@
 'use client';
 
-import useSWR from 'swr';
+import useSWR from '../lib/useSWRFallback';
 import { fetcher } from '../lib/api';
 
 export function useCODFee(price: number) {
