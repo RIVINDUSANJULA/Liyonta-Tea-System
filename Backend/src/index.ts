@@ -27,13 +27,12 @@ const smsUrl = 'https://bsms.hutch.lk/api/sendsms';
 const username = 'viduliyanage7@gmail.com';
 const password = 'gh##43QB';
 
-// Using the secure credentials from .env
+
 const loginData = {
     username: username,
     password: password
 };
 
-// Headers for login
 const loginHeaders = {
     'Content-Type': 'application/json',
     'Accept': '*/*',
