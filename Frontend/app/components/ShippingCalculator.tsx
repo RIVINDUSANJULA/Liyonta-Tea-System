@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useShippingFee } from '../hooks/useShippingFee';
-import { Truck } from 'lucide-react';
+import { Truck } from './Icons';
 
 export default function ShippingCalculator({ weight }: { weight: number }) {
   const { fee, isLoading, isError } = useShippingFee(weight);
