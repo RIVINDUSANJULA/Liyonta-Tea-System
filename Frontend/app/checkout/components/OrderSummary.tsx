@@ -14,7 +14,7 @@ const SummaryItem = React.memo(({ name, price, quantity, image }: { name: string
       <h4 className="font-semibold text-neutral-900 truncate text-sm">{name}</h4>
       <p className="text-neutral-500 text-xs">Qty: {quantity}</p>
     </div>
-    <p className="font-bold text-neutral-900 text-sm">${(price * quantity).toFixed(2)}</p>
+    <p className="font-bold text-neutral-900 text-sm">Rs. {(price * quantity).toFixed(2)}</p>
   </div>
 ));
 
@@ -47,18 +47,18 @@ export default function OrderSummary() {
       <div className="space-y-3 pt-6 border-t border-neutral-100">
         <div className="flex justify-between text-neutral-500 text-sm">
           <span>Subtotal</span>
-          <span>${subtotal.toFixed(2)}</span>
+          <span>Rs. {subtotal.toFixed(2)}</span>
         </div>
         <div className="flex justify-between text-neutral-500 text-sm">
           <span>Shipping</span>
           <span className={shipping === 0 ? 'italic' : ''}>
-            {shipping === 0 ? 'Select a method' : `$${shipping.toFixed(2)}`}
+            {shipping === 0 ? 'Select a method' : `Rs. ${shipping.toFixed(2)}`}
           </span>
         </div>
         <CODSummaryRow subtotal={subtotal} />
         <div className="flex justify-between items-center pt-4 border-t border-neutral-100">
           <span className="font-bold text-neutral-900 text-lg">Total</span>
-          <span className="font-bold text-emerald-700 text-2xl">${total.toFixed(2)}</span>
+          <span className="font-bold text-emerald-700 text-2xl">Rs. {total.toFixed(2)}</span>
         </div>
       </div>
     </aside>

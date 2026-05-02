@@ -13,7 +13,7 @@ export default function CODSummaryRow({ subtotal }: { subtotal: number }) {
         {isLoading ? (
           <div className="w-8 h-4 bg-neutral-100 animate-pulse rounded" />
         ) : (
-          <span className="font-medium text-neutral-700">+${fee.toFixed(2)}</span>
+          <span className="font-medium text-neutral-700">+Rs. {fee.toFixed(2)}</span>
         )}
       </div>
     </div>

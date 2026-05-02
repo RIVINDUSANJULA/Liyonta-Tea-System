@@ -19,7 +19,7 @@ export default function ShippingCalculator({ weight }: { weight: number }) {
         ) : isError ? (
           <span className="text-xs text-rose-500">Error calculating</span>
         ) : (
-          <span className="font-bold text-neutral-900">${fee.toFixed(2)}</span>
+          <span className="font-bold text-neutral-900">Rs. {fee.toFixed(2)}</span>
         )}
       </div>
     </div>

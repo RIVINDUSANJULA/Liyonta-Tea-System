@@ -42,7 +42,7 @@ export default function ShippingMethodSelector() {
                 <p className="text-sm text-neutral-500">{method.deliveryTime}</p>
               </div>
             </div>
-            <p className="font-bold text-emerald-700">${method.price.toFixed(2)}</p>
+            <p className="font-bold text-emerald-700">Rs. {method.price.toFixed(2)}</p>
           </label>
         ))}
       </div>

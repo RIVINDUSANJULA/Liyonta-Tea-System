@@ -46,7 +46,7 @@ const ProductCard = React.memo(({ product }: { product: StoreProduct }) => {
         <div className="flex justify-between items-start mb-1">
           <h3 className="font-semibold text-neutral-900 line-clamp-1">{product.name}</h3>
         </div>
-        <p className="text-emerald-700 font-bold text-lg mb-4">${product.price.toFixed(2)}</p>
+        <p className="text-emerald-700 font-bold text-lg mb-4">Rs. {product.price.toFixed(2)}</p>
         
         <button
           onClick={handleAdd}

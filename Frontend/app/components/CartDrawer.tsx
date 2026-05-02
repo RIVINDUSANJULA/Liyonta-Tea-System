@@ -17,7 +17,7 @@ const CartItem = React.memo(({ item }: { item: CartItemType }) => {
       
       <div className="flex-1 min-w-0">
         <h4 className="font-semibold text-neutral-900 truncate">{item.name}</h4>
-        <p className="text-emerald-700 font-bold">${item.price.toFixed(2)}</p>
+        <p className="text-emerald-700 font-bold">Rs. {item.price.toFixed(2)}</p>
         
         <div className="flex items-center gap-3 mt-2">
           <div className="flex items-center border border-neutral-200 rounded-lg bg-neutral-50 overflow-hidden">
@@ -57,7 +57,7 @@ const CartTotal = React.memo(() => {
       <div className="space-y-1 mb-4">
         <div className="flex justify-between items-center">
           <span className="text-neutral-500 font-medium">Subtotal</span>
-          <span className="text-xl font-bold text-neutral-900">${total.toFixed(2)}</span>
+          <span className="text-xl font-bold text-neutral-900">Rs. {total.toFixed(2)}</span>
         </div>
         <ShippingCalculator weight={useCartWeight()} />
       </div>
