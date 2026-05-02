@@ -1,4 +1,4 @@
-import { Product } from './useStore';
+import { Product } from './TeaStore';
 
 export const MOCK_PRODUCTS: Product[] = [
   {
