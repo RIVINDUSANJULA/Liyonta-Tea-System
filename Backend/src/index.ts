@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import axios from 'axios';
 
 // Assuming your env.js exports strings. 
-import { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } from './config/env.js';
+import { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } from './config/env';
 
 const app = express();
 
@@ -90,7 +90,7 @@ app.post('/api/visit', async (req: Request<{}, {}, VisitRequestBody>, res: Respo
     ON DUPLICATE KEY UPDATE count = count + 1;
   `;
 
-    pool.query(sql, [formattedDate, page], (err) => {
+    pool.query(sql, [formattedDate, page], (err: any) => {
         if (err) {
             console.error('Error recording visit:', err);
             res.status(500).send('Error recording visit');
@@ -103,7 +103,7 @@ app.post('/api/visit', async (req: Request<{}, {}, VisitRequestBody>, res: Respo
 app.get('/api/getproducts', (req: Request, res: Response): void => {
     const query = 'SELECT * FROM products';
 
-    pool.query(query, (error, results) => {
+    pool.query(query, (error: any, results: any) => {
         if (error) {
             console.error('Error executing query:', error);
             res.status(500).send('Error fetching data from the database');
@@ -117,7 +117,7 @@ app.get('/api/getproducts', (req: Request, res: Response): void => {
 app.get('/api/orderno', async (req: Request, res: Response): Promise<void> => {
     const query = 'SELECT * FROM orderno';
 
-    pool.query(query, (error, results) => {
+    pool.query(query, (error: any, results: any) => {
         if (error) {
             console.error('Error executing query:', error);
             res.status(500).send('Error fetching data from the database');
@@ -135,7 +135,7 @@ app.put('/api/updateorderno/:id', async (req: Request<{ id: string }, {}, Update
     const month = req.body.month;
 
     const sql = `UPDATE orderno SET billno = ?, month = ?, completedate = ? WHERE id = ?`;
-    pool.query(sql, [billno, month, completedate, id], (err) => {
+    pool.query(sql, [billno, month, completedate, id], (err: any) => {
         if (err) {
             console.error(err);
             res.status(500).send('Error updating data');
@@ -165,7 +165,7 @@ app.post('/api/Ordersadd', async (req: Request<{}, {}, OrderAddBody>, res: Respo
         'COD'
     ];
 
-    pool.query(sql, values, (err) => {
+    pool.query(sql, values, (err: any) => {
         if (err) {
             console.error('Error inserting data:', err);
             res.status(500).send('Error inserting data');
@@ -177,7 +177,7 @@ app.post('/api/Ordersadd', async (req: Request<{}, {}, OrderAddBody>, res: Respo
 
     try {
         axios.post(loginUrl, loginData, { headers: loginHeaders })
-            .then(loginResponse => {
+            .then((loginResponse: any) => {
                 const accessToken = loginResponse.data.accessToken;
                 const headers = {
                     'Content-Type': 'application/json',
@@ -196,14 +196,14 @@ app.post('/api/Ordersadd', async (req: Request<{}, {}, OrderAddBody>, res: Respo
 
                 // Send SMS using obtained access token
                 axios.post(smsUrl, smsData, { headers })
-                    .then(response => {
+                    .then((response: any) => {
                         console.log('Response:', response.data);
                     })
-                    .catch(error => {
+                    .catch((error: any) => {
                         console.error('Error:', error);
                     });
             })
-            .catch(loginError => {
+            .catch((loginError: any) => {
                 console.error('Login Error:', loginError);
             });
 
@@ -223,7 +223,7 @@ app.put('/api/updateinventory/:productname', async (req: Request<{ productname: 
     const productstock = req.body.productstock;
 
     const sql = `UPDATE products SET productstock = ? WHERE productname = ?`;
-    pool.query(sql, [productstock, productname], (err) => {
+    pool.query(sql, [productstock, productname], (err: any) => {
         if (err) {
             console.error(err);
             res.status(500).send('Error updating data');
@@ -238,7 +238,7 @@ app.get('/api/getshippingfees', async (req: Request<{}, {}, {}, { term: string }
 
     const sql = `SELECT * FROM shipping_rates WHERE low <= ? AND high > ?`;
 
-    pool.query(sql, [itemWeight, itemWeight], (err, result: any) => {
+    pool.query(sql, [itemWeight, itemWeight], (err: any, result: any) => {
         if (err) {
             console.error('Error fetching shipping rates:', err);
             res.status(500).send('Error fetching shipping rates');
@@ -256,7 +256,7 @@ app.get('/api/getcodfees', async (req: Request<{}, {}, {}, { term: string }>, re
 
     const sql = `SELECT * FROM shipping_rates_cod WHERE low <= ? AND high > ?`;
 
-    pool.query(sql, [price, price], (err, result: any) => {
+    pool.query(sql, [price, price], (err: any, result: any) => {
         if (err) {
             console.error('Error fetching COD fees:', err);
             res.status(500).send('Error fetching COD fees');
