@@ -2,9 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ChevronDown } from '../components/Icons';
-import { CheckoutProvider } from './store/CheckoutStore'; // Wait, I put it in app/store/CheckoutStore.tsx
-import { CheckoutProvider as Provider } from '../store/CheckoutStore';
+import { CheckoutProvider } from '../store/CheckoutStore';
 import ShippingForm from './components/ShippingForm';
 import ShippingMethodSelector from './components/ShippingMethod';
 import PaymentGateway from './components/PaymentGateway';
@@ -13,7 +11,7 @@ import PlaceOrderButton from './components/PlaceOrderButton';
 
 export default function CheckoutPage() {
   return (
-    <Provider>
+    <CheckoutProvider>
       <main className="min-h-screen bg-neutral-50 text-neutral-900 selection:bg-emerald-100">
         {/* Simple Header */}
         <nav className="h-16 bg-white border-b border-neutral-100 px-6 flex items-center justify-between sticky top-0 z-50">
@@ -54,6 +52,6 @@ export default function CheckoutPage() {
           </div>
         </div>
       </main>
-    </Provider>
+    </CheckoutProvider>
   );
 }

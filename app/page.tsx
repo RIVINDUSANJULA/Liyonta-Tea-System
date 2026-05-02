@@ -5,7 +5,7 @@ import Navbar from './components/Navbar';
 import FilterBar from './components/FilterBar';
 import ProductGrid from './components/ProductGrid';
 import CartDrawer from './components/CartDrawer';
-import { StoreProvider, useStoreDispatch } from './store/TeaStore';
+import { useStoreDispatch } from './store/TeaStore';
 import { MOCK_PRODUCTS } from './store/mockData';
 
 function StoreInitializer() {
@@ -20,7 +20,7 @@ function StoreInitializer() {
 
 export default function Home() {
   return (
-    <StoreProvider>
+    <>
       <StoreInitializer />
       <main className="min-h-screen bg-neutral-50 text-neutral-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
         <Navbar />
@@ -50,6 +50,6 @@ export default function Home() {
           <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-50 rounded-full blur-[120px] opacity-50" />
         </div>
       </main>
-    </StoreProvider>
+    </>
   );
 }
