@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { X, Plus, Minus, Trash2, ShoppingBag } from './Icons';
 import { useStoreState, useStoreDispatch, useCartTotal, CartItem as CartItemType } from '../store/TeaStore';
 
@@ -56,9 +57,11 @@ const CartTotal = React.memo(() => {
         <span className="text-neutral-500 font-medium">Subtotal</span>
         <span className="text-2xl font-bold text-neutral-900">${total.toFixed(2)}</span>
       </div>
-      <button className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold text-lg hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20 active:scale-[0.98]">
-        Checkout Now
-      </button>
+      <Link href="/checkout" className="block">
+        <button className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold text-lg hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20 active:scale-[0.98]">
+          Checkout Now
+        </button>
+      </Link>
     </div>
   );
 });
