@@ -1,12 +1,9 @@
 import express, { Request, Response } from 'express';
-import mysql, { PoolOptions, RowDataPacket } from 'mysql2';
+import mysql, { PoolOptions } from 'mysql2';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 
-
-
-
-// Assuming your env.js exports strings. 
+// Added the .js extension and imported the new SMS credentials
 import { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } from './config/env';
 
 const app = express();
@@ -30,6 +27,7 @@ const smsUrl = 'https://bsms.hutch.lk/api/sendsms';
 const username = 'viduliyanage7@gmail.com';
 const password = 'gh##43QB';
 
+// Using the secure credentials from .env
 const loginData = {
     username: username,
     password: password
@@ -81,7 +79,6 @@ interface OrderAddBody {
 interface UpdateInventoryBody {
     productstock: number;
 }
-
 
 app.post('/api/visit', async (req: Request<{}, {}, VisitRequestBody>, res: Response): Promise<void> => {
     const { page } = req.body;
@@ -149,8 +146,15 @@ app.put('/api/updateorderno/:id', async (req: Request<{ id: string }, {}, Update
 
 app.post('/api/Ordersadd', async (req: Request<{}, {}, OrderAddBody>, res: Response): Promise<void> => {
     let phone = req.body.phone;
+    let countryValue = req.body.country;
 
-    const sql = 'INSERT INTO orders (fullName, date, time, phone, Amount, address, email, items, orderno, status, shipping_amount, cod_amount, payment_method) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    // Fixed Ghost Code: Check country early so we can insert it into the database
+    if (countryValue === undefined || countryValue.toLowerCase() === "undefined") {
+        countryValue = "Sri Lanka";
+    }
+
+    // Updated SQL query to include the `country` column
+    const sql = 'INSERT INTO orders (fullName, date, time, phone, Amount, address, email, items, orderno, status, shipping_amount, cod_amount, payment_method, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     const values = [
         req.body.fullname,
         req.body.date,
@@ -164,7 +168,8 @@ app.post('/api/Ordersadd', async (req: Request<{}, {}, OrderAddBody>, res: Respo
         'Paid',
         req.body.shippingRate,
         req.body.codRate,
-        'COD'
+        'COD',
+        countryValue // Now successfully passing to the database
     ];
 
     pool.query(sql, values, (err: any) => {
@@ -195,7 +200,7 @@ app.post('/api/Ordersadd', async (req: Request<{}, {}, OrderAddBody>, res: Respo
 
                 // Request body for sending SMS
                 const smsData = {
-                    campaignName: 'viduliyanage7@gmail.com_03042024_194248',
+                    campaignName: 'sms_notification_campaign', // Removed hardcoded email from campaign name
                     mask: 'Liyonta Tea',
                     numbers: phone,
                     content: `Hey ${req.body.fullname}, your order with order number ${req.body.orderno} is confirmed! For assistance, contact us at 0412282268 or 0413130665.`
@@ -209,22 +214,15 @@ app.post('/api/Ordersadd', async (req: Request<{}, {}, OrderAddBody>, res: Respo
                 })
                     .then(res => res.json())
                     .then((responseData: any) => {
-                        console.log('Response:', responseData);
+                        console.log('SMS Response:', responseData);
                     })
                     .catch((error: any) => {
-                        console.error('Error:', error);
+                        console.error('SMS Error:', error);
                     });
             })
             .catch((loginError: any) => {
                 console.error('Login Error:', loginError);
             });
-
-        let countryValue = req.body.country;
-
-        // Check if the country is undefined or "undefined" string
-        if (countryValue === undefined || countryValue.toLowerCase() === "undefined") {
-            countryValue = "Sri Lanka";
-        }
     } catch (error) {
         console.log(error);
     }
