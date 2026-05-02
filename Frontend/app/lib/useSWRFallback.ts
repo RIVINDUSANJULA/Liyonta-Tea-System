@@ -7,7 +7,11 @@ const cache = new Map<string, { data: any; timestamp: number }>();
 export default function useSWRFallback<T>(
   key: string | null,
   fetcher: (url: string) => Promise<T>,
-  options: { dedupingInterval?: number } = {}
+  options: { 
+    dedupingInterval?: number;
+    revalidateOnFocus?: boolean;
+    revalidateIfStale?: boolean;
+  } = {}
 ) {
   const [data, setData] = useState<T | undefined>(() => {
     if (!key) return undefined;
