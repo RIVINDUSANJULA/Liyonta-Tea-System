@@ -3,7 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { X, Plus, Minus, Trash2, ShoppingBag } from './Icons';
-import { useStoreState, useStoreDispatch, useCartTotal, CartItem as CartItemType } from '../store/TeaStore';
+import { useStoreState, useStoreDispatch, useCartTotal, useCartWeight, CartItem as CartItemType } from '../store/TeaStore';
+import ShippingCalculator from './ShippingCalculator';
 
 const CartItem = React.memo(({ item }: { item: CartItemType }) => {
   const dispatch = useStoreDispatch();
@@ -53,9 +54,12 @@ const CartTotal = React.memo(() => {
   
   return (
     <div className="p-6 bg-white border-t border-neutral-200">
-      <div className="flex justify-between items-center mb-4">
-        <span className="text-neutral-500 font-medium">Subtotal</span>
-        <span className="text-2xl font-bold text-neutral-900">${total.toFixed(2)}</span>
+      <div className="space-y-1 mb-4">
+        <div className="flex justify-between items-center">
+          <span className="text-neutral-500 font-medium">Subtotal</span>
+          <span className="text-xl font-bold text-neutral-900">${total.toFixed(2)}</span>
+        </div>
+        <ShippingCalculator weight={useCartWeight()} />
       </div>
       <Link href="/checkout" className="block">
         <button className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold text-lg hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20 active:scale-[0.98]">

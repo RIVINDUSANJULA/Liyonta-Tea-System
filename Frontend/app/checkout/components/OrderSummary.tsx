@@ -3,6 +3,7 @@
 import React, { useMemo } from 'react';
 import { useStoreState } from '../../store/TeaStore';
 import { useCheckoutState } from '../../store/CheckoutStore';
+import CODSummaryRow from '../../components/CODSummaryRow';
 
 const SummaryItem = React.memo(({ name, price, quantity, image }: { name: string, price: number, quantity: number, image: string }) => (
   <div className="flex items-center gap-4 py-3 border-b border-neutral-100 last:border-0">
@@ -25,8 +26,7 @@ export default function OrderSummary() {
 
   const subtotal = useMemo(() => cart.reduce((sum, item) => sum + item.price * item.quantity, 0), [cart]);
   const shipping = shippingMethod?.price || 0;
-  const tax = subtotal * 0.08; // 8% tax
-  const total = subtotal + shipping + tax;
+  const total = subtotal + shipping;
 
   return (
     <aside className="sticky top-24 h-fit bg-white p-8 rounded-2xl shadow-xl shadow-emerald-900/5 border border-neutral-100 animate-in fade-in zoom-in duration-500">
@@ -55,10 +55,7 @@ export default function OrderSummary() {
             {shipping === 0 ? 'Select a method' : `$${shipping.toFixed(2)}`}
           </span>
         </div>
-        <div className="flex justify-between text-neutral-500 text-sm">
-          <span>Taxes (8%)</span>
-          <span>${tax.toFixed(2)}</span>
-        </div>
+        <CODSummaryRow subtotal={subtotal} />
         <div className="flex justify-between items-center pt-4 border-t border-neutral-100">
           <span className="font-bold text-neutral-900 text-lg">Total</span>
           <span className="font-bold text-emerald-700 text-2xl">${total.toFixed(2)}</span>

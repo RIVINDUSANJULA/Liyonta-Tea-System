@@ -1,10 +1,22 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Plus, Check } from './Icons';
-import { useStoreDispatch, useFilteredProducts, Product } from '../store/TeaStore';
+import { useStoreDispatch, useStoreState, Product as StoreProduct } from '../store/TeaStore';
+import { useProducts, Product as APIProduct } from '../hooks/useProducts';
 
-const ProductCard = React.memo(({ product }: { product: Product }) => {
+const SkeletonCard = () => (
+  <div className="bg-white border border-neutral-100 rounded-2xl overflow-hidden shadow-sm animate-pulse">
+    <div className="aspect-square bg-neutral-200" />
+    <div className="p-5 space-y-3">
+      <div className="h-4 bg-neutral-200 rounded w-3/4" />
+      <div className="h-6 bg-neutral-200 rounded w-1/4" />
+      <div className="h-10 bg-neutral-900/10 rounded-xl w-full" />
+    </div>
+  </div>
+);
+
+const ProductCard = React.memo(({ product }: { product: StoreProduct }) => {
   const [added, setAdded] = useState(false);
   const dispatch = useStoreDispatch();
 
@@ -64,9 +76,62 @@ const ProductCard = React.memo(({ product }: { product: Product }) => {
 ProductCard.displayName = 'ProductCard';
 
 export default function ProductGrid() {
-  const products = useFilteredProducts();
+  const { products: apiProducts, isLoading, isError } = useProducts();
+  const { searchQuery, sortBy } = useStoreState();
+  const dispatch = useStoreDispatch();
 
-  if (products.length === 0) {
+  // Sync API products with Store
+  useEffect(() => {
+    if (apiProducts.length > 0) {
+      const mappedProducts: StoreProduct[] = apiProducts.map(p => ({
+        id: p.id,
+        name: p.productname,
+        price: p.productprice,
+        category: p.category_id.toString(), // Simplified for now
+        image: p.url, // Assuming url is just the filename or full path
+        popularity: p.productstock, // Using stock as a proxy for popularity
+      }));
+      dispatch({ type: 'SET_PRODUCTS', payload: mappedProducts });
+    }
+  }, [apiProducts, dispatch]);
+
+  // Use store products for filtering
+  const { products: storeProducts } = useStoreState();
+  
+  const filteredProducts = React.useMemo(() => {
+    let filtered = storeProducts.filter((p) =>
+      p.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    if (sortBy === 'price-low') {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'price-high') {
+      filtered.sort((a, b) => b.price - a.price);
+    } else if (sortBy === 'popularity') {
+      filtered.sort((a, b) => b.popularity - a.popularity);
+    }
+
+    return filtered;
+  }, [storeProducts, searchQuery, sortBy]);
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
+        {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
+        <p className="text-rose-500 font-bold">Unable to load products.</p>
+        <p className="text-neutral-400 text-sm">Please check if the backend server is running.</p>
+      </div>
+    );
+  }
+
+  if (filteredProducts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 px-6">
         <p className="text-neutral-400 text-lg">No products found matching your search.</p>
@@ -76,7 +141,7 @@ export default function ProductGrid() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
-      {products.map((product) => (
+      {filteredProducts.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}
     </div>

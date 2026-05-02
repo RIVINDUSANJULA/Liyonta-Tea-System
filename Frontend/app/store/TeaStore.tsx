@@ -8,7 +8,7 @@ export interface Product {
   price: number;
   category: string;
   image: string;
-  popularity: number;
+  weight: number;
 }
 
 export interface CartItem extends Product {
@@ -115,6 +115,11 @@ export function useCartCount() {
 export function useCartTotal() {
   const { cart } = useStoreState();
   return useMemo(() => cart.reduce((sum, item) => sum + item.price * item.quantity, 0), [cart]);
+}
+
+export function useCartWeight() {
+  const { cart } = useStoreState();
+  return useMemo(() => cart.reduce((sum, item) => sum + (item.weight || 0) * item.quantity, 0), [cart]);
 }
 
 export function useFilteredProducts() {
