@@ -1,3 +1,5 @@
+'use client';
+
 import { useCategories } from './hooks/useCatalog';
 import CategorySection from './components/CategorySection';
 import Navbar from './components/Navbar';
