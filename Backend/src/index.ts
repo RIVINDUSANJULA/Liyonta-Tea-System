@@ -297,6 +297,22 @@ app.get('/api/categories', (req: Request, res: Response): void => {
     });
 });
 
+app.get('/api/getproductsbycategory/:categoryId', (req: Request<{ categoryId: string }>, res: Response): void => {
+    const { categoryId } = req.params;
+
+    const query = 'SELECT * FROM products WHERE category_id = ?';
+
+    pool.query(query, [categoryId], (error: any, results: any) => {
+        if (error) {
+            console.error('Error executing query:', error);
+            res.status(500).send('Error fetching data from the database');
+            return;
+        }
+
+        res.json(results);
+    });
+});
+
 
 app.listen(8801, () => {
     console.log("listening on port 8801");
