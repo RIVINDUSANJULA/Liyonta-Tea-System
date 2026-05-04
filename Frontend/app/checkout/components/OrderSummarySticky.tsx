@@ -7,10 +7,8 @@ export const OrderSummarySticky = React.memo(() => {
   const { state } = useCart();
   const { subtotal } = useCartTotals();
   
-  // These would typically come from the previous Cart step via a state sync or persistence
-  // For this demo, we assume they are recalculated or passed down
-  const shipping = 250; // Example placeholder
-  const cod = 150;      // Example placeholder
+  const shipping = state.shippingFee;
+  const cod = state.codFee;
   const serviceFee = 50;
   const total = subtotal + shipping + cod + serviceFee;
 
@@ -30,7 +28,7 @@ export const OrderSummarySticky = React.memo(() => {
               <p className="text-xs text-neutral-400">Quantity - {item.quantity}</p>
             </div>
             <span className="font-bold text-neutral-900 text-sm whitespace-nowrap">
-              Rs. {(item.price * item.quantity).toLocaleString()}
+              LKR {item.price.toFixed(2)}
             </span>
           </div>
         ))}
@@ -39,23 +37,23 @@ export const OrderSummarySticky = React.memo(() => {
       <div className="space-y-4 pt-8 border-t border-neutral-100">
         <div className="flex justify-between text-sm">
           <span className="text-neutral-500">Subtotal</span>
-          <span className="font-bold text-neutral-900">Rs. {subtotal.toLocaleString()}</span>
+          <span className="font-bold text-neutral-900">LKR {Math.round(subtotal)}</span>
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-neutral-500">Shipping</span>
-          <span className="font-bold text-neutral-900">Rs. {shipping.toLocaleString()}</span>
+          <span className="font-bold text-neutral-900">LKR {Math.round(shipping)}</span>
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-neutral-500">Cash on Delivery</span>
-          <span className="font-bold text-neutral-900">Rs. {cod.toLocaleString()}</span>
+          <span className="font-bold text-neutral-900">LKR {Math.round(cod)}</span>
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-neutral-500">Service Fee(Postal)</span>
-          <span className="font-bold text-neutral-900">Rs. {serviceFee.toLocaleString()}</span>
+          <span className="font-bold text-neutral-900">LKR {Math.round(serviceFee)}</span>
         </div>
         <div className="flex justify-between items-end pt-4 border-t border-neutral-100">
           <span className="text-sm font-bold text-neutral-400 uppercase tracking-widest">Total</span>
-          <span className="text-2xl font-black text-neutral-900">Rs. {total.toLocaleString()}</span>
+          <span className="text-2xl font-black text-neutral-900">LKR {Math.round(total)}</span>
         </div>
       </div>
     </aside>

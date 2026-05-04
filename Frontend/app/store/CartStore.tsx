@@ -13,10 +13,13 @@ export interface CartItem {
 
 interface CartState {
   items: CartItem[];
+  shippingFee: number;
+  codFee: number;
 }
 
 type CartAction =
   | { type: 'SET_ITEMS'; payload: CartItem[] }
+  | { type: 'SET_FEES'; payload: { shipping: number; cod: number } }
   | { type: 'INCREMENT'; payload: number }
   | { type: 'DECREMENT'; payload: number }
   | { type: 'REMOVE'; payload: number };
@@ -30,6 +33,12 @@ function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case 'SET_ITEMS':
       return { ...state, items: action.payload };
+    case 'SET_FEES':
+      return { 
+        ...state, 
+        shippingFee: action.payload.shipping === -1 ? state.shippingFee : action.payload.shipping, 
+        codFee: action.payload.cod === -1 ? state.codFee : action.payload.cod 
+      };
     case 'INCREMENT':
       return {
         ...state,
@@ -57,19 +66,21 @@ function cartReducer(state: CartState, action: CartAction): CartState {
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(cartReducer, { items: [] });
+  const [state, dispatch] = useReducer(cartReducer, { items: [], shippingFee: 0, codFee: 0 });
 
   // Persistence
   useEffect(() => {
-    const saved = localStorage.getItem('liyonta_cart');
+    const saved = localStorage.getItem('liyonta_cart_state');
     if (saved) {
-      dispatch({ type: 'SET_ITEMS', payload: JSON.parse(saved) });
+      const parsed = JSON.parse(saved);
+      dispatch({ type: 'SET_ITEMS', payload: parsed.items || [] });
+      dispatch({ type: 'SET_FEES', payload: { shipping: parsed.shippingFee || 0, cod: parsed.codFee || 0 } });
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('liyonta_cart', JSON.stringify(state.items));
-  }, [state.items]);
+    localStorage.setItem('liyonta_cart_state', JSON.stringify(state));
+  }, [state]);
 
   return (
     <CartContext.Provider value={{ state, dispatch }}>

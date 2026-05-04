@@ -14,37 +14,36 @@ const CartItemRow = React.memo(({ item }: { item: CartItem }) => {
           <div className="w-16 h-16 rounded-xl bg-neutral-100 overflow-hidden flex-shrink-0">
             <img src={item.url} alt={item.productname} className="w-full h-full object-cover" />
           </div>
-          <span className="font-semibold text-neutral-900">{item.productname}</span>
-        </div>
-      </td>
-      <td className="py-6">
-        <div className="flex items-center gap-3 bg-white border border-neutral-200 rounded-lg w-fit px-2 py-1">
-          <button 
-            onClick={() => dispatch({ type: 'DECREMENT', payload: item.id })}
-            className="p-1 hover:text-emerald-600 transition-colors"
-          >
-            <Minus className="w-4 h-4" />
-          </button>
-          <span className="w-8 text-center font-bold tabular-nums">{item.quantity}</span>
-          <button 
-            onClick={() => dispatch({ type: 'INCREMENT', payload: item.id })}
-            className="p-1 hover:text-emerald-600 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
-        </div>
-      </td>
-      <td className="py-6 font-medium text-neutral-600">Rs. {item.price.toLocaleString()}</td>
-      <td className="py-6">
-        <div className="flex items-center justify-between">
-          <span className="font-bold text-neutral-900">Rs. {(item.price * item.quantity).toLocaleString()}</span>
+        <div className="flex flex-col gap-1">
+          <span className="font-bold text-neutral-900">{item.productname}</span>
           <button 
             onClick={() => dispatch({ type: 'REMOVE', payload: item.id })}
-            className="opacity-0 group-hover:opacity-100 p-2 text-neutral-300 hover:text-rose-500 transition-all"
+            className="text-xs text-neutral-400 hover:text-neutral-900 transition-colors w-fit underline decoration-neutral-200"
           >
-            <Trash2 className="w-5 h-5" />
+            Remove
           </button>
         </div>
+      </td>
+      <td className="py-6">
+        <div className="flex items-center bg-white border border-neutral-200 rounded-lg overflow-hidden w-fit">
+          <button 
+            onClick={() => dispatch({ type: 'DECREMENT', payload: item.id })}
+            className="px-3 py-2 hover:bg-neutral-50 transition-colors border-r border-neutral-200 font-medium"
+          >
+            -
+          </button>
+          <span className="w-10 text-center font-bold tabular-nums text-sm">{item.quantity}</span>
+          <button 
+            onClick={() => dispatch({ type: 'INCREMENT', payload: item.id })}
+            className="px-3 py-2 hover:bg-neutral-50 transition-colors border-l border-neutral-200 font-medium"
+          >
+            +
+          </button>
+        </div>
+      </td>
+      <td className="py-6 font-medium text-neutral-600">Rs. {item.price.toFixed(2)}</td>
+      <td className="py-6 text-right">
+        <span className="font-bold text-neutral-900">Rs. {(item.price * item.quantity).toFixed(2)}</span>
       </td>
     </tr>
   );

@@ -29,12 +29,10 @@ function CheckoutPageContent() {
 
     setIsSubmitting(true);
     
-    // Mocking the fees from the store state (calculated in Cart step)
-    const shippingRate = 250;
-    const codRate = 150;
-    const serviceFee = 50;
-    const grandTotal = subtotal + shippingRate + codRate + serviceFee;
+    const postalFee = 50;
+    const grandTotal = subtotal + state.shippingFee + state.codFee + postalFee;
 
+    // Format items string exactly as required by backend: "Product Name - Qty(Price)"
     const itemsString = state.items.reduce((acc, item, index) => {
       const itemStr = `${item.productname} - ${item.quantity}(${item.price})`;
       return index === 0 ? itemStr : `${acc}, ${itemStr}`;
@@ -44,16 +42,16 @@ function CheckoutPageContent() {
 
     const payload = {
       fullname: values.fullName,
-      date: new Date().toLocaleDateString(),
-      time: new Date().toLocaleTimeString(),
+      date: new Date().toLocaleDateString('en-GB'), // Use standardized date
+      time: new Date().toLocaleTimeString('en-GB'),
       phone: values.mobilePhone,
-      Amount: grandTotal,
+      Amount: Math.round(grandTotal),
       address: values.address,
       email: values.email,
       items: itemsString,
       orderno: orderNo,
-      shippingRate: shippingRate,
-      codRate: codRate
+      shippingRate: state.shippingFee,
+      codRate: state.codFee
     };
 
     try {
@@ -105,7 +103,7 @@ function CheckoutPageContent() {
                 className={`w-full py-6 rounded-2xl font-black text-xl uppercase tracking-widest transition-all ${
                   isSubmitting || !isValid
                     ? 'bg-neutral-100 text-neutral-300 cursor-not-allowed'
-                    : 'bg-slate-900 text-white hover:bg-slate-800 active:scale-[0.98] shadow-2xl shadow-slate-900/20'
+                    : 'bg-emerald-900 text-white hover:bg-emerald-800 active:scale-[0.98] shadow-2xl shadow-emerald-900/20'
                 }`}
               >
                 {isSubmitting ? (
