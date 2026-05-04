@@ -4,6 +4,7 @@ import React from 'react';
 import useSWR from '../../lib/useSWRFallback';
 import { fetcher } from '../../lib/api';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
+import { useCart } from '../../store/CartStore';
 
 const SkeletonRow = () => (
   <div className="h-4 w-16 bg-neutral-200 animate-pulse rounded" />

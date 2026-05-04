@@ -1,27 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
 import Navbar from './components/Navbar';
 import FilterBar from './components/FilterBar';
 import ProductGrid from './components/ProductGrid';
 import CartDrawer from './components/CartDrawer';
 import { useStoreDispatch } from './store/TeaStore';
-import { MOCK_PRODUCTS } from './store/mockData';
-
-function StoreInitializer() {
-  const dispatch = useStoreDispatch();
-
-  useEffect(() => {
-    dispatch({ type: 'SET_PRODUCTS', payload: MOCK_PRODUCTS });
-  }, [dispatch]);
-
-  return null;
-}
 
 export default function Home() {
   return (
     <>
-      <StoreInitializer />
       <main className="min-h-screen bg-neutral-50 text-neutral-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
         <Navbar />
         

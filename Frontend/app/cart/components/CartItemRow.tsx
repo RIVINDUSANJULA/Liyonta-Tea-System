@@ -14,14 +14,15 @@ const CartItemRow = React.memo(({ item }: { item: CartItem }) => {
           <div className="w-16 h-16 rounded-xl bg-neutral-100 overflow-hidden flex-shrink-0">
             <img src={item.url} alt={item.productname} className="w-full h-full object-cover" />
           </div>
-        <div className="flex flex-col gap-1">
-          <span className="font-bold text-neutral-900">{item.productname}</span>
-          <button 
-            onClick={() => dispatch({ type: 'REMOVE', payload: item.id })}
-            className="text-xs text-neutral-400 hover:text-neutral-900 transition-colors w-fit underline decoration-neutral-200"
-          >
-            Remove
-          </button>
+          <div className="flex flex-col gap-1">
+            <span className="font-bold text-neutral-900">{item.productname}</span>
+            <button 
+              onClick={() => dispatch({ type: 'REMOVE', payload: item.id })}
+              className="text-xs text-neutral-400 hover:text-neutral-900 transition-colors w-fit underline decoration-neutral-200"
+            >
+              Remove
+            </button>
+          </div>
         </div>
       </td>
       <td className="py-6">
