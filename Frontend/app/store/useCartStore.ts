@@ -45,7 +45,7 @@ const createStore = <T>(config: (set: (partial: Partial<T> | ((state: T) => Part
     useEffect(() => {
       const listener = () => forceUpdate((c) => c + 1);
       listeners.add(listener);
-      return () => listeners.delete(listener);
+      return () => { listeners.delete(listener); };
     }, []);
 
     return selector(state);

@@ -1,4 +1,4 @@
-import ProductDetailClient from '@/components/ProductDetailClient';
+import ProductDetailClient from '../../components/ProductDetailClient';
 
 interface PageProps {
   params: Promise<{ id: string }>;
