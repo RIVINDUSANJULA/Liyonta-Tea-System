@@ -50,3 +50,20 @@ export function useCategoryProducts(categoryId: number | null) {
     isError: error,
   };
 }
+
+export function useProduct(id: number) {
+  // We fetch all products to leverage the existing cache from the home page
+  const { data, error, isLoading } = useSWR<Product[]>('/api/getproducts', fetcher, {
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+    dedupingInterval: 600000, // 10 minutes cache
+  });
+
+  const product = data?.find((p) => p.id === id);
+
+  return {
+    product,
+    isLoading,
+    isError: error || (!isLoading && !product),
+  };
+}

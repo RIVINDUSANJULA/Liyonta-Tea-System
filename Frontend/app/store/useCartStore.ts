@@ -16,7 +16,7 @@ export interface CartItem {
 
 interface CartStore {
   items: CartItem[];
-  addToCart: (product: Product) => void;
+  addToCart: (product: Product, quantity?: number) => void;
   incrementQty: (id: number) => void;
   decrementQty: (id: number) => void;
   removeItem: (id: number) => void;
@@ -56,12 +56,12 @@ const createStore = <T>(config: (set: (partial: Partial<T> | ((state: T) => Part
 
 export const useCartStore = createStore<CartStore>((set: (partial: Partial<CartStore> | ((state: CartStore) => Partial<CartStore>)) => void) => ({
   items: [],
-  addToCart: (product: Product) => set((state: CartStore) => {
+  addToCart: (product: Product, quantity: number = 1) => set((state: CartStore) => {
     const existingItem = state.items.find((item: CartItem) => item.id === product.id);
     if (existingItem) {
       return {
         items: state.items.map((item: CartItem) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
         ),
       };
     }
@@ -70,7 +70,7 @@ export const useCartStore = createStore<CartStore>((set: (partial: Partial<CartS
         id: product.id,
         productname: product.productname,
         productprice: product.productprice,
-        quantity: 1,
+        quantity: quantity,
         url: product.url,
         Weight: product.Weight,
         description: product.description
