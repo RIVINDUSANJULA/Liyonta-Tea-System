@@ -4,7 +4,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 
 // Added the .js extension and imported the new SMS credentials
-import { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } from './config/env';
+import { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } from './config/env.js';
 
 const app = express();
 
@@ -314,6 +314,6 @@ app.get('/api/getproductsbycategory/:categoryId', (req: Request<{ categoryId: st
 });
 
 
-app.listen(8801, () => {
-    console.log("listening on port 8801");
+app.listen(8805, () => {
+    console.log("listening on port 8805");
 });
