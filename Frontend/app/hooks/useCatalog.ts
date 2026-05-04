@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import useSWR from '../lib/useSWRFallback';
 import { fetcher } from '../lib/api';
 
@@ -15,6 +16,7 @@ export interface Product {
   productstock: number;
   url: string;
   description: string;
+  maindescription: string;
   category_id: number;
   Weight: number;
 }
@@ -59,7 +61,9 @@ export function useProduct(id: number) {
     dedupingInterval: 600000, // 10 minutes cache
   });
 
-  const product = data?.find((p) => p.id === id);
+  const product = useMemo(() => {
+    return data?.find((p) => p.id === id);
+  }, [data, id]);
 
   return {
     product,

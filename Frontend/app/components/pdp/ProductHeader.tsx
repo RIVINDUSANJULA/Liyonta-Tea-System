@@ -3,18 +3,18 @@
 import React from 'react';
 
 interface ProductHeaderProps {
-  name: string;
-  description: string;
+  productname: string;
+  maindescription: string;
 }
 
-const ProductHeader: React.FC<ProductHeaderProps> = React.memo(({ name, description }) => {
+const ProductHeader: React.FC<ProductHeaderProps> = React.memo(({ productname, maindescription }) => {
   return (
     <div className="mb-8">
-      <h1 className="font-serif text-4xl md:text-5xl text-black mb-4 leading-tight">
-        {name}
+      <h1 className="font-serif text-4xl text-black mb-4 leading-tight">
+        {productname}
       </h1>
-      <p className="text-gray-500 text-sm leading-relaxed max-w-xl italic">
-        {description}
+      <p className="text-gray-500 text-sm leading-relaxed mb-8">
+        {maindescription}
       </p>
     </div>
   );
