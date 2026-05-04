@@ -30,6 +30,8 @@ type Action =
   | { type: 'REMOVE_FROM_CART'; payload: number }
   | { type: 'UPDATE_QUANTITY'; payload: { id: number; delta: number } }
   | { type: 'TOGGLE_CART' }
+  | { type: 'OPEN_CART' }
+  | { type: 'CLOSE_CART' }
   | { type: 'SET_SEARCH_QUERY'; payload: string }
   | { type: 'SET_SORT_BY'; payload: string };
 
@@ -70,6 +72,10 @@ function storeReducer(state: State, action: Action): State {
       };
     case 'TOGGLE_CART':
       return { ...state, isCartOpen: !state.isCartOpen };
+    case 'OPEN_CART':
+      return { ...state, isCartOpen: true };
+    case 'CLOSE_CART':
+      return { ...state, isCartOpen: false };
     case 'SET_SEARCH_QUERY':
       return { ...state, searchQuery: action.payload };
     case 'SET_SORT_BY':

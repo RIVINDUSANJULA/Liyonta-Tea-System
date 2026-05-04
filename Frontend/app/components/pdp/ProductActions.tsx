@@ -33,7 +33,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({ product }) => {
   const handleAddToCart = () => {
     addToCart(product, quantity);
     // Open the cart drawer to provide immediate feedback
-    dispatch({ type: 'TOGGLE_CART' });
+    dispatch({ type: 'OPEN_CART' });
   };
 
   const handleBuyNow = () => {

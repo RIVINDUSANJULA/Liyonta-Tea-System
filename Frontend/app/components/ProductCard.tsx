@@ -18,7 +18,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
     e.preventDefault();
     e.stopPropagation();
     addToCart(product);
-    dispatch({ type: 'TOGGLE_CART' });
+    dispatch({ type: 'OPEN_CART' });
   };
 
   return (
