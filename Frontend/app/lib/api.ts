@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8801';
+const BASE_URL = 'http://127.0.0.1:8801';
 
 export async function fetcher<T>(url: string, options?: RequestInit): Promise<T> {
   try {
