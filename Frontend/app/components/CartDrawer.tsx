@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { X, Plus, Minus, Trash2, ShoppingBag } from './Icons';
+import { useStoreState, useStoreDispatch } from '../store/TeaStore';
 import { useCartStore } from '../store/useCartStore';
 import ShippingCalculator from './ShippingCalculator';
 
@@ -50,9 +51,9 @@ const CartItem = React.memo(({ item }: { item: any }) => {
 CartItem.displayName = 'CartItem';
 
 const CartTotal = React.memo(() => {
-  const items = useCartStore((state) => state.items);
-  const subtotal = items.reduce((acc, item) => acc + item.productprice * item.quantity, 0);
-  const totalWeight = items.reduce((acc, item) => acc + (item.Weight || 0) * item.quantity, 0);
+  const items = useCartStore((state: any) => state.items);
+  const subtotal = items.reduce((acc: number, item: any) => acc + item.productprice * item.quantity, 0);
+  const totalWeight = items.reduce((acc: number, item: any) => acc + (item.Weight || 0) * item.quantity, 0);
   
   return (
     <div className="p-6 bg-white border-t border-neutral-200">
@@ -75,12 +76,9 @@ const CartTotal = React.memo(() => {
 CartTotal.displayName = 'CartTotal';
 
 export default function CartDrawer() {
-  // We still use TeaStore for isCartOpen and toggle action if needed, 
-  // or we can move isCartOpen to useCartStore as well.
-  // For now, I'll just use useCartStore for the items.
   const { isCartOpen } = useStoreState();
   const dispatch = useStoreDispatch();
-  const items = useCartStore((state) => state.items);
+  const items = useCartStore((state: any) => state.items);
 
   return (
     <>
@@ -128,7 +126,7 @@ export default function CartDrawer() {
             </div>
           ) : (
             <div>
-              {items.map((item) => (
+              {items.map((item: any) => (
                 <CartItem key={item.id} item={item} />
               ))}
             </div>

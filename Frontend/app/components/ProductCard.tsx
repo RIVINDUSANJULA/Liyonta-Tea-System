@@ -10,7 +10,7 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const addToCart = useCartStore((state) => state.addToCart);
+  const addToCart = useCartStore((state: any) => state.addToCart);
 
   const handleBuyClick = (e: React.MouseEvent) => {
     e.preventDefault();

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { Product } from '../hooks/useProducts';
 
 export interface CartItem {
   id: number;
@@ -21,11 +22,11 @@ interface CartStore {
 
 export const useCartStore = create<CartStore>((set) => ({
   items: [],
-  addToCart: (product) => set((state) => {
-    const existingItem = state.items.find((item) => item.id === product.id);
+  addToCart: (product: Product) => set((state: CartStore) => {
+    const existingItem = state.items.find((item: CartItem) => item.id === product.id);
     if (existingItem) {
       return {
-        items: state.items.map((item) =>
+        items: state.items.map((item: CartItem) =>
           item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
         ),
       };
@@ -42,18 +43,18 @@ export const useCartStore = create<CartStore>((set) => ({
       }] 
     };
   }),
-  incrementQty: (id) => set((state) => ({
-    items: state.items.map((item) =>
+  incrementQty: (id: number) => set((state: CartStore) => ({
+    items: state.items.map((item: CartItem) =>
       item.id === id ? { ...item, quantity: item.quantity + 1 } : item
     ),
   })),
-  decrementQty: (id) => set((state) => ({
-    items: state.items.map((item) =>
+  decrementQty: (id: number) => set((state: CartStore) => ({
+    items: state.items.map((item: CartItem) =>
       item.id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
     ),
   })),
-  removeItem: (id) => set((state) => ({
-    items: state.items.filter((item) => item.id !== id),
+  removeItem: (id: number) => set((state: CartStore) => ({
+    items: state.items.filter((item: CartItem) => item.id !== id),
   })),
   clearCart: () => set({ items: [] }),
 }));
