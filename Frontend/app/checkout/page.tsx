@@ -4,6 +4,10 @@ import React, { useState } from 'react';
 import { ShoppingBag } from '../components/Icons';
 import { useCartHydration } from '../hooks/useCartHydration';
 import { useCartStore } from '../store/useCartStore';
+import { ContactSection, DeliverySection, PaymentSection } from './components/FormSections';
+import { OrderSummarySticky } from './components/OrderSummarySticky';
+import { fetcher } from '../lib/api';
+import { useSimpleForm } from '../hooks/useSimpleForm';
 
 function CheckoutPageContent() {
   const { items, cartTotal, removeItem } = useCartHydration();
