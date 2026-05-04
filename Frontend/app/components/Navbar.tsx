@@ -2,15 +2,17 @@
 
 import React from 'react';
 import { ShoppingCart } from './Icons';
-import { useStoreDispatch, useCartCount } from '../store/TeaStore';
+import { useCartStore } from '../store/useCartStore';
 
 const CartBadge = React.memo(() => {
-  const count = useCartCount();
-  const dispatch = useStoreDispatch();
+  const items = useCartStore((state) => state.items);
+  const openCart = useCartStore((state) => state.openCart);
+  
+  const count = items.reduce((sum, item) => sum + item.quantity, 0);
   
   return (
     <div className="relative cursor-pointer p-2 hover:bg-neutral-100 rounded-full transition-colors"
-         onClick={() => dispatch({ type: 'TOGGLE_CART' })}>
+         onClick={openCart}>
       <ShoppingCart className="w-6 h-6 text-neutral-800" />
       {count > 0 && (
         <span className="absolute -top-1 -right-1 bg-emerald-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-in zoom-in duration-300">
