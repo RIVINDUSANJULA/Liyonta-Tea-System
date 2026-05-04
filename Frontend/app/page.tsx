@@ -1,5 +1,7 @@
 import { useCategories } from './hooks/useCatalog';
 import CategorySection from './components/CategorySection';
+import Navbar from './components/Navbar';
+import CartDrawer from './components/CartDrawer';
 
 const CategorySkeleton = () => (
   <div className="mb-16 animate-pulse">
