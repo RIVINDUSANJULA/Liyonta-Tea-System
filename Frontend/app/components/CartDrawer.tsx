@@ -1,27 +1,39 @@
 'use client';
 
-import React, { useMemo } from 'react';
-import { useCartStore } from '../store/useCartStore';
+import React from 'react';
+import { useCartHydration } from '../hooks/useCartHydration';
 import { X, ShoppingBag, Trash2, Plus, Minus } from './Icons';
 
-/**
- * ISOLATED CART DRAWER:
- * This component reacts exclusively to the 'isCartOpen' state from useCartStore.
- * By placing it at the root layout and using a subscription, we ensure that
- * opening the cart does not trigger re-renders of the product grid or navigation bar.
- */
 const CartDrawer = () => {
-  const isCartOpen = useCartStore((state) => state.isCartOpen);
-  const closeCart = useCartStore((state) => state.closeCart);
-  const items = useCartStore((state) => state.items);
-  const removeItem = useCartStore((state) => state.removeItem);
-  const incrementQty = useCartStore((state) => state.incrementQty);
-  const decrementQty = useCartStore((state) => state.decrementQty);
+  const { 
+    isHydrated, 
+    items, 
+    isCartOpen, 
+    closeCart, 
+    removeItem, 
+    incrementQty, 
+    decrementQty, 
+    cartTotal 
+  } = useCartHydration();
 
-  const total = useMemo(() => 
-    items.reduce((sum, item) => sum + item.productprice * item.quantity, 0),
-    [items]
-  );
+  if (!isHydrated && isCartOpen) {
+    return (
+      <div className="fixed top-0 right-0 h-full w-full max-w-md bg-white z-[101] shadow-2xl p-6 animate-pulse">
+        <div className="h-8 bg-gray-100 rounded w-1/3 mb-12" />
+        <div className="space-y-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex gap-4">
+              <div className="w-20 h-20 bg-gray-100 rounded-2xl" />
+              <div className="flex-1 space-y-3">
+                <div className="h-4 bg-gray-100 rounded w-3/4" />
+                <div className="h-4 bg-gray-50 rounded w-1/4" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -106,7 +118,7 @@ const CartDrawer = () => {
             <div className="p-6 bg-gray-50 space-y-4">
               <div className="flex justify-between items-center text-lg">
                 <span className="font-medium text-gray-500">Subtotal</span>
-                <span className="font-bold text-black font-serif">LKR {total.toFixed(2)}</span>
+                <span className="font-bold text-black font-serif">LKR {cartTotal.toFixed(2)}</span>
               </div>
               <button className="w-full bg-[#468241] hover:bg-[#3a6b36] text-white font-bold py-4 rounded-full transition-all duration-300 transform active:scale-95 shadow-lg">
                 CHECKOUT NOW

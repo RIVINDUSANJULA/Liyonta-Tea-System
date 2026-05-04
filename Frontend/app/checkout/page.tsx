@@ -2,15 +2,14 @@
 
 import React, { useState } from 'react';
 import { ShoppingBag } from '../components/Icons';
-import { CartProvider, useCart, useCartTotals } from '../store/CartStore';
-import { ContactSection, DeliverySection, PaymentSection } from './components/FormSections';
-import { OrderSummarySticky } from './components/OrderSummarySticky';
-import { fetcher } from '../lib/api';
-import { useSimpleForm } from '../hooks/useSimpleForm';
+import { useCartHydration } from '../hooks/useCartHydration';
+import { useCartStore } from '../store/useCartStore';
 
 function CheckoutPageContent() {
-  const { state, dispatch: cartDispatch } = useCart();
-  const { subtotal } = useCartTotals();
+  const { items, cartTotal, removeItem } = useCartHydration();
+  // We'll need a way to clear the cart from the store
+  const clearCart = useCartStore((state) => state.clearCart);
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, values, setValue, watch, isValid } = useSimpleForm({
@@ -30,11 +29,11 @@ function CheckoutPageContent() {
     setIsSubmitting(true);
     
     const postalFee = 50;
-    const grandTotal = subtotal + state.shippingFee + state.codFee + postalFee;
+    const grandTotal = cartTotal + (/* shippingFee */ 0) + (/* codFee */ 0) + postalFee;
 
     // Format items string exactly as required by backend: "Product Name - Qty(Price)"
-    const itemsString = state.items.reduce((acc, item, index) => {
-      const itemStr = `${item.productname} - ${item.quantity}(${item.price})`;
+    const itemsString = items.reduce((acc, item, index) => {
+      const itemStr = `${item.productname} - ${item.quantity}(${item.productprice})`;
       return index === 0 ? itemStr : `${acc}, ${itemStr}`;
     }, "");
 
@@ -42,7 +41,7 @@ function CheckoutPageContent() {
 
     const payload = {
       fullname: values.fullName,
-      date: new Date().toLocaleDateString('en-GB'), // Use standardized date
+      date: new Date().toLocaleDateString('en-GB'),
       time: new Date().toLocaleTimeString('en-GB'),
       phone: values.mobilePhone,
       Amount: Math.round(grandTotal),
@@ -50,8 +49,8 @@ function CheckoutPageContent() {
       email: values.email,
       items: itemsString,
       orderno: orderNo,
-      shippingRate: state.shippingFee,
-      codRate: state.codFee
+      shippingRate: 0, // Placeholder for now
+      codRate: 0 // Placeholder for now
     };
 
     try {
@@ -60,8 +59,8 @@ function CheckoutPageContent() {
         body: JSON.stringify(payload)
       });
       
-      // Success: Clear cart and redirect
-      cartDispatch({ type: 'SET_ITEMS', payload: [] });
+      // Success: Clear the persistent cart and redirect
+      clearCart();
       window.location.href = '/success';
     } catch (error) {
       console.error('Order submission failed:', error);
@@ -128,8 +127,6 @@ function CheckoutPageContent() {
 
 export default function CheckoutPage() {
   return (
-    <CartProvider>
-      <CheckoutPageContent />
-    </CartProvider>
+    <CheckoutPageContent />
   );
 }

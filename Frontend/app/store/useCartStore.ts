@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Product } from '../hooks/useCatalog';
 
-// Simplified Zustand-like store implementation for restricted environments
-type StateSelector<T, U> = (state: T) => U;
-
+// Unified Cart State Interface
 export interface CartItem {
   id: number;
   productname: string;
@@ -30,23 +28,62 @@ interface CartStore {
   closeCart: () => void;
 }
 
-const createStore = <T>(config: (set: (partial: Partial<T> | ((state: T) => Partial<T>)) => void, get: () => T) => T) => {
+/**
+ * CUSTOM PERSISTENT STORE IMPLEMENTATION
+ * This mirrors Zustand's API and middleware logic but is optimized for environments 
+ * without external package access. It handles localStorage syncing and partialization.
+ */
+const STORAGE_KEY = 'liyonta-cart-storage';
+
+const createPersistentStore = <T extends object>(config: (set: (partial: Partial<T> | ((state: T) => Partial<T>)) => void, get: () => T) => T) => {
   let state: T;
-  const listeners = new Set<(state: T, prevState: T) => void>();
+  const listeners = new Set<(state: T) => void>();
+
+  // Helper to load initial state from localStorage (Hydration check handled by hook)
+  const loadSavedState = (): Partial<T> => {
+    if (typeof window === 'undefined') return {};
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return {};
+      const parsed = JSON.parse(saved);
+      // partialize: we only expect 'items' to be saved
+      return { items: parsed.state?.items } as any;
+    } catch (e) {
+      console.error('Failed to load cart state', e);
+      return {};
+    }
+  };
+
+  const saveState = (newState: T) => {
+    if (typeof window === 'undefined') return;
+    try {
+      // PARTIALIZE: We only save 'items', keeping 'isCartOpen' ephemeral (always false on reload)
+      const dataToSave = {
+        state: { items: (newState as any).items },
+        version: 0
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+    } catch (e) {
+      console.error('Failed to save cart state', e);
+    }
+  };
 
   const setState = (partial: Partial<T> | ((state: T) => Partial<T>)) => {
     const nextState = typeof partial === 'function' ? (partial as Function)(state) : partial;
     if (nextState !== state) {
-      const previousState = state;
       state = { ...state, ...nextState };
-      listeners.forEach((listener) => listener(state, previousState));
+      saveState(state); // Sync to localStorage on every change
+      listeners.forEach((listener) => listener(state));
     }
   };
 
   const getState = () => state;
-  state = config(setState, getState);
+  
+  // Initialize state with default config + saved items
+  const initialConfig = config(setState, getState);
+  state = { ...initialConfig, ...loadSavedState() };
 
-  const useStore = <U>(selector: StateSelector<T, U> = (s: T) => s as any): U => {
+  const useStore = <U>(selector: (state: T) => U = (s: T) => s as any): U => {
     const [, forceUpdate] = useState(0);
 
     useEffect(() => {
@@ -58,15 +95,10 @@ const createStore = <T>(config: (set: (partial: Partial<T> | ((state: T) => Part
     return selector(state);
   };
 
-  return useStore;
+  return { useStore, getState };
 };
 
-/**
- * UNIFIED CART STORE
- * Manages both the cart items (Data) and the drawer visibility (UI).
- * Merging these allows for "Atomic Updates" (e.g., adding an item and opening the cart in one render).
- */
-export const useCartStore = createStore<CartStore>((set) => ({
+const store = createPersistentStore<CartStore>((set) => ({
   items: [],
   isCartOpen: false,
 
@@ -115,3 +147,6 @@ export const useCartStore = createStore<CartStore>((set) => ({
   openCart: () => set({ isCartOpen: true }),
   closeCart: () => set({ isCartOpen: false }),
 }));
+
+export const useCartStore = store.useStore;
+export const getCartStore = store.getState;
