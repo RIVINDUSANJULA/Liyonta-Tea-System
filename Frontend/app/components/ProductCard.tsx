@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Product } from '../hooks/useCatalog';
 import { useCartStore } from '../store/useCartStore';
+import { useStoreDispatch } from '../store/TeaStore';
 
 interface ProductCardProps {
   product: Product;
@@ -11,11 +12,13 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
   const addToCart = useCartStore((state: any) => state.addToCart);
+  const dispatch = useStoreDispatch();
 
   const handleBuy = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     addToCart(product);
+    dispatch({ type: 'TOGGLE_CART' });
   };
 
   return (

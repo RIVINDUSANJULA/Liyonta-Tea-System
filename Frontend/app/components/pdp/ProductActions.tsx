@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Product } from '../../hooks/useCatalog';
 import { useCartStore } from '../../store/useCartStore';
+import { useStoreDispatch } from '../../store/TeaStore';
 import { Minus, Plus } from '../Icons';
 
 interface ProductActionsProps {
@@ -14,17 +15,19 @@ const ProductActions: React.FC<ProductActionsProps> = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
   const router = useRouter();
   const addToCart = useCartStore((state: any) => state.addToCart);
+  const dispatch = useStoreDispatch();
 
   const handleIncrement = () => setQuantity((q) => q + 1);
   const handleDecrement = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
 
   const handleAddToCart = () => {
     addToCart(product, quantity);
+    dispatch({ type: 'TOGGLE_CART' });
   };
 
   const handleBuyNow = () => {
-    handleAddToCart();
-    router.push('/cart');
+    addToCart(product, quantity);
+    router.push('/checkout');
   };
 
   return (
