@@ -73,11 +73,8 @@ export const useCartStore = createStore<CartStore>((set) => ({
   addToCart: (product: Product, quantity: number = 1) => set((state: CartStore) => {
     const existingItem = state.items.find((item: CartItem) => item.id === product.id);
     
-    // ATOMIC UPDATE: We update the items array AND open the cart in the same state change.
-    // This ensures React only performs a single render cycle for both actions.
     if (existingItem) {
       return {
-        isCartOpen: true,
         items: state.items.map((item: CartItem) =>
           item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
         ),
@@ -85,7 +82,6 @@ export const useCartStore = createStore<CartStore>((set) => ({
     }
     
     return { 
-      isCartOpen: true,
       items: [...state.items, { 
         id: product.id,
         productname: product.productname,
