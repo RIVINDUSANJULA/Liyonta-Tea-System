@@ -9,7 +9,7 @@ import { useStoreDispatch } from './store/TeaStore';
 export default function Home() {
   return (
     <>
-      <main className="min-h-screen bg-neutral-50 text-neutral-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
+      <main className="min-h-screen bg-[#f8f9fa] text-neutral-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
         <Navbar />
         
         <div className="max-w-7xl mx-auto pt-16">
