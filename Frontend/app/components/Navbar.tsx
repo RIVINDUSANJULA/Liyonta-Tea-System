@@ -2,13 +2,13 @@
 
 import React from 'react';
 import { ShoppingCart } from './Icons';
-import { useCartStore } from '../store/useCartStore';
+import { useCartHydration } from '../hooks/useCartHydration';
 
 const CartBadge = React.memo(() => {
-  const items = useCartStore((state) => state.items);
-  const openCart = useCartStore((state) => state.openCart);
+  const { cartCount, isHydrated, openCart } = useCartHydration();
   
-  const count = items.reduce((sum, item) => sum + item.quantity, 0);
+  // Prevent rendering the badge on the server to avoid hydration mismatch
+  const count = isHydrated ? cartCount : 0;
   
   return (
     <div className="relative cursor-pointer p-2 hover:bg-neutral-100 rounded-full transition-colors"
