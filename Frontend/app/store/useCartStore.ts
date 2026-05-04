@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Product } from '../hooks/useProducts';
+import { useState, useEffect } from 'react';
+import { Product } from '../hooks/useCatalog';
 
-// Simplified Zustand-like store implementation to handle environments without internet access
+// Simplified Zustand-like store implementation for restricted environments
 type StateSelector<T, U> = (state: T) => U;
 
 export interface CartItem {
@@ -16,11 +16,18 @@ export interface CartItem {
 
 interface CartStore {
   items: CartItem[];
+  isCartOpen: boolean;
+  
+  // Actions
   addToCart: (product: Product, quantity?: number) => void;
   incrementQty: (id: number) => void;
   decrementQty: (id: number) => void;
   removeItem: (id: number) => void;
   clearCart: () => void;
+  
+  // UI State Actions
+  openCart: () => void;
+  closeCart: () => void;
 }
 
 const createStore = <T>(config: (set: (partial: Partial<T> | ((state: T) => Partial<T>)) => void, get: () => T) => T) => {
@@ -54,18 +61,31 @@ const createStore = <T>(config: (set: (partial: Partial<T> | ((state: T) => Part
   return useStore;
 };
 
-export const useCartStore = createStore<CartStore>((set: (partial: Partial<CartStore> | ((state: CartStore) => Partial<CartStore>)) => void) => ({
+/**
+ * UNIFIED CART STORE
+ * Manages both the cart items (Data) and the drawer visibility (UI).
+ * Merging these allows for "Atomic Updates" (e.g., adding an item and opening the cart in one render).
+ */
+export const useCartStore = createStore<CartStore>((set) => ({
   items: [],
+  isCartOpen: false,
+
   addToCart: (product: Product, quantity: number = 1) => set((state: CartStore) => {
     const existingItem = state.items.find((item: CartItem) => item.id === product.id);
+    
+    // ATOMIC UPDATE: We update the items array AND open the cart in the same state change.
+    // This ensures React only performs a single render cycle for both actions.
     if (existingItem) {
       return {
+        isCartOpen: true,
         items: state.items.map((item: CartItem) =>
           item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
         ),
       };
     }
+    
     return { 
+      isCartOpen: true,
       items: [...state.items, { 
         id: product.id,
         productname: product.productname,
@@ -77,18 +97,25 @@ export const useCartStore = createStore<CartStore>((set: (partial: Partial<CartS
       }] 
     };
   }),
+
   incrementQty: (id: number) => set((state: CartStore) => ({
     items: state.items.map((item: CartItem) =>
       item.id === id ? { ...item, quantity: item.quantity + 1 } : item
     ),
   })),
+
   decrementQty: (id: number) => set((state: CartStore) => ({
     items: state.items.map((item: CartItem) =>
       item.id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
     ),
   })),
+
   removeItem: (id: number) => set((state: CartStore) => ({
     items: state.items.filter((item: CartItem) => item.id !== id),
   })),
+
   clearCart: () => set({ items: [] }),
+
+  openCart: () => set({ isCartOpen: true }),
+  closeCart: () => set({ isCartOpen: false }),
 }));

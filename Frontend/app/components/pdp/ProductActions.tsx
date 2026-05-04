@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Product } from '../../hooks/useCatalog';
 import { useCartStore } from '../../store/useCartStore';
-import { useStoreDispatch } from '../../store/TeaStore';
 import { Minus, Plus } from '../Icons';
 
 interface ProductActionsProps {
@@ -21,19 +20,15 @@ const ProductActions: React.FC<ProductActionsProps> = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
   const router = useRouter();
   
-  // Zustand store for global cart management
+  // Zustand store for unified cart and UI management
   const addToCart = useCartStore((state: any) => state.addToCart);
-  
-  // TeaStore for UI state (toggling the cart drawer)
-  const dispatch = useStoreDispatch();
 
   const handleIncrement = () => setQuantity((q) => q + 1);
   const handleDecrement = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
 
   const handleAddToCart = () => {
+    // Atomic update: Adds item and opens cart drawer
     addToCart(product, quantity);
-    // Open the cart drawer to provide immediate feedback
-    dispatch({ type: 'OPEN_CART' });
   };
 
   const handleBuyNow = () => {

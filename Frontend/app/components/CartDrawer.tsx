@@ -1,140 +1,125 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
-import { X, Plus, Minus, Trash2, ShoppingBag } from './Icons';
-import { useStoreState, useStoreDispatch } from '../store/TeaStore';
+import React, { useMemo } from 'react';
 import { useCartStore } from '../store/useCartStore';
-import ShippingCalculator from './ShippingCalculator';
+import { X, ShoppingBag, Trash2, Plus, Minus } from './Icons';
 
-const CartItem = React.memo(({ item }: { item: any }) => {
-  const { incrementQty, decrementQty, removeItem } = useCartStore();
+/**
+ * ISOLATED CART DRAWER:
+ * This component reacts exclusively to the 'isCartOpen' state from useCartStore.
+ * By placing it at the root layout and using a subscription, we ensure that
+ * opening the cart does not trigger re-renders of the product grid or navigation bar.
+ */
+const CartDrawer = () => {
+  const isCartOpen = useCartStore((state) => state.isCartOpen);
+  const closeCart = useCartStore((state) => state.closeCart);
+  const items = useCartStore((state) => state.items);
+  const removeItem = useCartStore((state) => state.removeItem);
+  const incrementQty = useCartStore((state) => state.incrementQty);
+  const decrementQty = useCartStore((state) => state.decrementQty);
 
-  return (
-    <div className="flex items-center gap-4 p-4 border-b border-neutral-100 group animate-in slide-in-from-right-4 duration-300">
-      <div className="w-20 h-20 rounded-xl overflow-hidden bg-neutral-100 flex-shrink-0">
-        <img src={item.url} alt={item.productname} className="w-full h-full object-cover" />
-      </div>
-      
-      <div className="flex-1 min-w-0">
-        <h4 className="font-semibold text-neutral-900 truncate">{item.productname}</h4>
-        <p className="text-emerald-700 font-bold">Rs. {item.productprice.toFixed(2)}</p>
-        
-        <div className="flex items-center gap-3 mt-2">
-          <div className="flex items-center border border-neutral-200 rounded-lg bg-neutral-50 overflow-hidden">
-            <button 
-              onClick={() => decrementQty(item.id)}
-              className="p-1 hover:bg-neutral-200 transition-colors"
-            >
-              <Minus className="w-3 h-3" />
-            </button>
-            <span className="w-8 text-center text-xs font-bold">{item.quantity}</span>
-            <button 
-              onClick={() => incrementQty(item.id)}
-              className="p-1 hover:bg-neutral-200 transition-colors"
-            >
-              <Plus className="w-3 h-3" />
-            </button>
-          </div>
-          <button 
-            onClick={() => removeItem(item.id)}
-            className="text-neutral-400 hover:text-rose-500 transition-colors"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-    </div>
+  const total = useMemo(() => 
+    items.reduce((sum, item) => sum + item.productprice * item.quantity, 0),
+    [items]
   );
-});
-
-CartItem.displayName = 'CartItem';
-
-const CartTotal = React.memo(() => {
-  const items = useCartStore((state: any) => state.items);
-  const subtotal = items.reduce((acc: number, item: any) => acc + item.productprice * item.quantity, 0);
-  const totalWeight = items.reduce((acc: number, item: any) => acc + (item.Weight || 0) * item.quantity, 0);
-  
-  return (
-    <div className="p-6 bg-white border-t border-neutral-200">
-      <div className="space-y-1 mb-4">
-        <div className="flex justify-between items-center">
-          <span className="text-neutral-500 font-medium">Subtotal</span>
-          <span className="text-xl font-bold text-neutral-900">Rs. {subtotal.toFixed(2)}</span>
-        </div>
-        <ShippingCalculator weight={totalWeight} />
-      </div>
-      <Link href="/checkout" className="block">
-        <button className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold text-lg hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20 active:scale-[0.98]">
-          Checkout Now
-        </button>
-      </Link>
-    </div>
-  );
-});
-
-CartTotal.displayName = 'CartTotal';
-
-export default function CartDrawer() {
-  const { isCartOpen } = useStoreState();
-  const dispatch = useStoreDispatch();
-  const items = useCartStore((state: any) => state.items);
 
   return (
     <>
-      {/* Backdrop */}
+      {/* 60fps Backdrop Overlay - Uses opacity transitions for smoothness */}
       <div 
-        className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] transition-opacity duration-300 ${
-          isCartOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        className={`fixed inset-0 bg-black/50 z-[100] transition-opacity duration-300 ease-in-out ${
+          isCartOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
-        onClick={() => dispatch({ type: 'TOGGLE_CART' })}
+        onClick={closeCart}
       />
 
-      {/* Drawer */}
+      {/* 60fps Sliding Panel - Uses translate-x for hardware-accelerated animations */}
       <div 
-        className={`fixed top-0 right-0 h-full w-full max-w-md bg-white z-[70] shadow-2xl transition-transform duration-500 ease-out flex flex-col ${
+        className={`fixed top-0 right-0 h-full w-full max-w-md bg-white z-[101] shadow-2xl transform transition-transform duration-300 ease-in-out ${
           isCartOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <div className="p-6 flex items-center justify-between border-b border-neutral-100">
-          <div className="flex items-center gap-2">
-            <ShoppingBag className="w-6 h-6 text-emerald-600" />
-            <h2 className="text-xl font-bold text-neutral-900">Your Cart</h2>
-          </div>
-          <button 
-            onClick={() => dispatch({ type: 'TOGGLE_CART' })}
-            className="p-2 hover:bg-neutral-100 rounded-full transition-colors"
-          >
-            <X className="w-6 h-6 text-neutral-400" />
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto">
-          {items.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center p-10 text-center">
-              <div className="w-20 h-20 bg-neutral-50 rounded-full flex items-center justify-center mb-4">
-                <ShoppingBag className="w-10 h-10 text-neutral-200" />
-              </div>
-              <h3 className="text-lg font-semibold text-neutral-900 mb-1">Your cart is empty</h3>
-              <p className="text-neutral-400 text-sm">Looks like you haven't added any premium teas yet.</p>
-              <button 
-                onClick={() => dispatch({ type: 'TOGGLE_CART' })}
-                className="mt-6 text-emerald-600 font-bold hover:underline"
-              >
-                Continue Shopping
-              </button>
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-gray-100">
+            <div className="flex items-center gap-2">
+              <ShoppingBag className="w-5 h-5 text-[#468241]" />
+              <h2 className="text-xl font-bold font-serif">Your Cart</h2>
             </div>
-          ) : (
-            <div>
-              {items.map((item: any) => (
-                <CartItem key={item.id} item={item} />
-              ))}
+            <button 
+              onClick={closeCart}
+              className="p-2 text-gray-400 hover:text-black transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Cart Items */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {items.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-center">
+                <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                  <ShoppingBag className="w-10 h-10 text-gray-300" />
+                </div>
+                <p className="text-gray-500 font-medium">Your cart is empty</p>
+                <button 
+                  onClick={closeCart}
+                  className="mt-4 text-[#468241] font-bold text-sm hover:underline"
+                >
+                  Continue Shopping
+                </button>
+              </div>
+            ) : (
+              items.map((item) => (
+                <div key={item.id} className="flex gap-4 group">
+                  <div className="w-20 h-20 bg-gray-50 rounded-2xl flex-shrink-0 flex items-center justify-center p-2">
+                    <img src={item.url} alt={item.productname} className="max-w-full max-h-full object-contain" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start mb-1">
+                      <h3 className="text-sm font-bold text-black uppercase truncate">{item.productname}</h3>
+                      <button onClick={() => removeItem(item.id)} className="text-gray-300 hover:text-red-500 transition-colors">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <p className="text-[#d13239] font-bold text-sm mb-3">LKR {item.productprice.toFixed(2)}</p>
+                    
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center bg-gray-50 rounded-full px-3 py-1 border border-gray-100">
+                        <button onClick={() => decrementQty(item.id)} className="p-1 hover:text-[#468241]">
+                          <Minus className="w-3 h-3" />
+                        </button>
+                        <span className="w-8 text-center text-xs font-bold">{item.quantity}</span>
+                        <button onClick={() => incrementQty(item.id)} className="p-1 hover:text-[#468241]">
+                          <Plus className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Footer */}
+          {items.length > 0 && (
+            <div className="p-6 bg-gray-50 space-y-4">
+              <div className="flex justify-between items-center text-lg">
+                <span className="font-medium text-gray-500">Subtotal</span>
+                <span className="font-bold text-black font-serif">LKR {total.toFixed(2)}</span>
+              </div>
+              <button className="w-full bg-[#468241] hover:bg-[#3a6b36] text-white font-bold py-4 rounded-full transition-all duration-300 transform active:scale-95 shadow-lg">
+                CHECKOUT NOW
+              </button>
+              <p className="text-[10px] text-center text-gray-400 uppercase tracking-widest">
+                Shipping and taxes calculated at checkout
+              </p>
             </div>
           )}
         </div>
-
-        {items.length > 0 && <CartTotal />}
       </div>
     </>
   );
-}
+};
+
+export default CartDrawer;
