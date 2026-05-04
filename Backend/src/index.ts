@@ -282,6 +282,22 @@ app.get('/api/getcodfees', async (req: Request<{}, {}, {}, { term: string }>, re
     });
 });
 
+
+app.get('/api/categories', (req: Request, res: Response): void => {
+    const query = 'SELECT * FROM categories';
+
+    pool.query(query, (error: any, results: any) => {
+        if (error) {
+            console.error('Error executing query:', error);
+            res.status(500).send('Error fetching data from the database');
+            return;
+        }
+
+        res.json(results);
+    });
+});
+
+
 app.listen(8801, () => {
     console.log("listening on port 8801");
 });
