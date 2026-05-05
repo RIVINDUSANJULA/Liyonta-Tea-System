@@ -1,21 +1,22 @@
 'use client';
 
 import React from 'react';
-import { useCart, useCartTotals } from '../../store/CartStore';
+import { useCartHydration } from '../../hooks/useCartHydration';
 
 export const OrderSummarySticky = React.memo(() => {
-  const { state } = useCart();
-  const { subtotal } = useCartTotals();
+  const { items, cartTotal, isHydrated } = useCartHydration();
   
-  const shipping = state.shippingFee;
-  const cod = state.codFee;
+  const shipping = 0; // Placeholder
+  const cod = 0; // Placeholder
   const serviceFee = 50;
-  const total = subtotal + shipping + cod + serviceFee;
+  const total = cartTotal + shipping + cod + serviceFee;
+
+  if (!isHydrated) return null;
 
   return (
     <aside className="sticky top-10 space-y-8 bg-neutral-50/50 p-10 rounded-3xl border border-neutral-100">
       <div className="space-y-6">
-        {state.items.map((item) => (
+        {items.map((item) => (
           <div key={item.id} className="flex gap-4 items-center">
             <div className="relative w-16 h-16 rounded-xl bg-white border border-neutral-100 overflow-hidden flex-shrink-0">
               <img src={item.url} alt={item.productname} className="w-full h-full object-cover" />
@@ -28,16 +29,16 @@ export const OrderSummarySticky = React.memo(() => {
               <p className="text-xs text-neutral-400">Quantity - {item.quantity}</p>
             </div>
             <span className="font-bold text-neutral-900 text-sm whitespace-nowrap">
-              LKR {item.price.toFixed(2)}
+              LKR {item.productprice.toFixed(2)}
             </span>
           </div>
         ))}
       </div>
-
+ 
       <div className="space-y-4 pt-8 border-t border-neutral-100">
         <div className="flex justify-between text-sm">
           <span className="text-neutral-500">Subtotal</span>
-          <span className="font-bold text-neutral-900">LKR {Math.round(subtotal)}</span>
+          <span className="font-bold text-neutral-900">LKR {Math.round(cartTotal)}</span>
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-neutral-500">Shipping</span>
