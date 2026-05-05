@@ -1,10 +1,12 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { useCartHydration } from '../hooks/useCartHydration';
 import { X, ShoppingBag, Trash2, Plus, Minus } from './Icons';
 
 const CartDrawer = () => {
+  const router = useRouter();
   const { 
     isHydrated, 
     items, 
@@ -120,7 +122,13 @@ const CartDrawer = () => {
                 <span className="font-medium text-gray-500">Subtotal</span>
                 <span className="font-bold text-black font-serif">LKR {cartTotal.toFixed(2)}</span>
               </div>
-              <button className="w-full bg-[#468241] hover:bg-[#3a6b36] text-white font-bold py-4 rounded-full transition-all duration-300 transform active:scale-95 shadow-lg">
+              <button 
+                onClick={() => {
+                  closeCart();
+                  router.push('/checkout');
+                }}
+                className="w-full bg-[#468241] hover:bg-[#3a6b36] text-white font-bold py-4 rounded-full transition-all duration-300 transform active:scale-95 shadow-lg"
+              >
                 CHECKOUT NOW
               </button>
               <p className="text-[10px] text-center text-gray-400 uppercase tracking-widest">
