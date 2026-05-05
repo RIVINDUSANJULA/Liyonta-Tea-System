@@ -3,58 +3,83 @@
 import React from 'react';
 import { useCartHydration } from '../../hooks/useCartHydration';
 
+/**
+ * PIXEL-PERFECT STICKY ORDER SUMMARY
+ * Wrapped in React.memo to ensure zero re-renders when the user types 
+ * in the left-hand form column.
+ */
 export const OrderSummarySticky = React.memo(() => {
   const { items, cartTotal, isHydrated } = useCartHydration();
   
-  const shipping = 0; // Placeholder
-  const cod = 0; // Placeholder
+  // Design constants matching directives
+  const shipping = 0;
+  const cod = 0;
   const serviceFee = 50;
-  const total = cartTotal + shipping + cod + serviceFee;
+  const grandTotal = cartTotal + shipping + cod + serviceFee;
 
   if (!isHydrated) return null;
 
   return (
-    <aside className="sticky top-10 space-y-8 bg-neutral-50/50 p-10 rounded-3xl border border-neutral-100">
-      <div className="space-y-6">
+    <aside className="sticky top-8 h-fit space-y-8">
+      {/* Cart Items List */}
+      <div className="space-y-4">
         {items.map((item) => (
-          <div key={item.id} className="flex gap-4 items-center">
-            <div className="relative w-16 h-16 rounded-xl bg-white border border-neutral-100 overflow-hidden flex-shrink-0">
-              <img src={item.url} alt={item.productname} className="w-full h-full object-cover" />
-              <span className="absolute -top-2 -right-2 w-6 h-6 bg-neutral-900 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+          <div key={item.id} className="flex items-center gap-4">
+            {/* Thumbnail Box */}
+            <div className="border border-gray-200 rounded-md w-16 h-16 p-1 flex items-center justify-center relative bg-white">
+              <img 
+                src={item.url} 
+                alt={item.productname} 
+                className="max-w-full max-h-full object-contain" 
+              />
+              <span className="absolute -top-2 -right-2 w-5 h-5 bg-gray-500 text-white text-[10px] font-medium rounded-full flex items-center justify-center">
                 {item.quantity}
               </span>
             </div>
+            
+            {/* Product Details */}
             <div className="flex-1 min-w-0">
-              <h4 className="font-bold text-neutral-900 truncate text-sm">{item.productname}</h4>
-              <p className="text-xs text-neutral-400">Quantity - {item.quantity}</p>
+              <h4 className="text-sm font-medium text-gray-900 truncate">
+                {item.productname}
+              </h4>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Quantity - {item.quantity}
+              </p>
             </div>
-            <span className="font-bold text-neutral-900 text-sm whitespace-nowrap">
-              LKR {item.productprice.toFixed(2)}
+            
+            {/* Price */}
+            <span className="text-sm font-medium text-gray-900 whitespace-nowrap">
+              LKR {item.productprice.toFixed(0)}
             </span>
           </div>
         ))}
       </div>
- 
-      <div className="space-y-4 pt-8 border-t border-neutral-100">
-        <div className="flex justify-between text-sm">
-          <span className="text-neutral-500">Subtotal</span>
-          <span className="font-bold text-neutral-900">LKR {Math.round(cartTotal)}</span>
+
+      {/* Totals Breakdown */}
+      <div className="mt-8 border-t border-gray-200 pt-4 space-y-3">
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-gray-500">Subtotal</span>
+          <span className="text-sm text-gray-500">LKR {cartTotal.toFixed(0)}</span>
         </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-neutral-500">Shipping</span>
-          <span className="font-bold text-neutral-900">LKR {Math.round(shipping)}</span>
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-gray-500">Shipping</span>
+          <span className="text-sm text-gray-500">LKR {shipping}</span>
         </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-neutral-500">Cash on Delivery</span>
-          <span className="font-bold text-neutral-900">LKR {Math.round(cod)}</span>
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-gray-500">Cash on Delivery</span>
+          <span className="text-sm text-gray-500">LKR {cod}</span>
         </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-neutral-500">Service Fee(Postal)</span>
-          <span className="font-bold text-neutral-900">LKR {Math.round(serviceFee)}</span>
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-gray-500">Service Fee(Postal)</span>
+          <span className="text-sm text-gray-500">LKR {serviceFee}</span>
         </div>
-        <div className="flex justify-between items-end pt-4 border-t border-neutral-100">
-          <span className="text-sm font-bold text-neutral-400 uppercase tracking-widest">Total</span>
-          <span className="text-2xl font-black text-neutral-900">LKR {Math.round(total)}</span>
+      </div>
+
+      {/* Grand Total */}
+      <div className="mt-4 pt-4 border-t border-gray-200">
+        <div className="flex justify-between items-center">
+          <span className="text-base font-bold text-gray-900">Total</span>
+          <span className="text-lg font-bold text-gray-900">LKR {grandTotal.toFixed(0)}</span>
         </div>
       </div>
     </aside>

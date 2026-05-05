@@ -3,23 +3,29 @@
 import React from 'react';
 import { Coins } from '../../components/Icons';
 
+/**
+ * INPUT STYLING CONSTANT
+ * Ensures 100% accuracy across all form fields.
+ */
+const inputClasses = "w-full border border-gray-200 rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#2c4c4e] focus:border-[#2c4c4e] transition-colors bg-white placeholder:text-gray-400";
+
 export const ContactSection = ({ register }: { register: any }) => {
   return (
-    <section className="space-y-6">
-      <h2 className="text-xl font-bold text-neutral-900">Contact</h2>
-      <div className="space-y-4">
+    <section>
+      <h2 className="text-xl font-bold text-gray-900 mb-4">Contact</h2>
+      <div className="space-y-3">
         <input
           {...register('mobilePhone', { required: true })}
           placeholder="Mobile phone number"
-          className="w-full p-4 bg-neutral-100 rounded-xl border-none focus:ring-2 focus:ring-neutral-900 transition-all outline-none"
+          className={inputClasses}
         />
-        <label className="flex items-center gap-3 cursor-pointer group">
+        <label className="flex items-center gap-2 cursor-pointer mt-3">
           <input
             type="checkbox"
             {...register('wantsNews')}
-            className="w-5 h-5 rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900"
+            className="w-4 h-4 rounded border-gray-300 text-[#2c4c4e] focus:ring-[#2c4c4e]"
           />
-          <span className="text-sm text-neutral-600 group-hover:text-neutral-900 transition-colors">
+          <span className="text-sm text-gray-700">
             Email me with news and offers
           </span>
         </label>
@@ -30,39 +36,45 @@ export const ContactSection = ({ register }: { register: any }) => {
 
 export const DeliverySection = ({ register }: { register: any }) => {
   return (
-    <section className="space-y-6 pt-10">
-      <h2 className="text-xl font-bold text-neutral-900">Delivery</h2>
+    <section className="mt-8">
+      <h2 className="text-xl font-bold text-gray-900 mb-4">Delivery</h2>
       <div className="space-y-4">
+        {/* Read-only Country Field */}
         <input
           value="Sri Lanka"
           readOnly
-          className="w-full p-4 bg-neutral-100/50 text-neutral-400 rounded-xl border-none cursor-not-allowed"
+          className={`${inputClasses} bg-gray-50 text-gray-500 cursor-not-allowed`}
         />
+        
+        {/* Name and Email Row */}
         <div className="grid grid-cols-2 gap-4">
           <input
             {...register('fullName', { required: true })}
             placeholder="Full name"
-            className="w-full p-4 bg-neutral-100 rounded-xl border-none focus:ring-2 focus:ring-neutral-900 transition-all outline-none"
+            className={inputClasses}
           />
           <input
             {...register('email', { required: true })}
             type="email"
             placeholder="Email"
-            className="w-full p-4 bg-neutral-100 rounded-xl border-none focus:ring-2 focus:ring-neutral-900 transition-all outline-none"
+            className={inputClasses}
           />
         </div>
+
+        {/* Address Field */}
         <input
           {...register('address', { required: true })}
           placeholder="Address"
-          className="w-full p-4 bg-neutral-100 rounded-xl border-none focus:ring-2 focus:ring-neutral-900 transition-all outline-none"
+          className={inputClasses}
         />
-        <label className="flex items-center gap-3 cursor-pointer group">
+
+        <label className="flex items-center gap-2 cursor-pointer mt-3">
           <input
             type="checkbox"
             {...register('saveInfo')}
-            className="w-5 h-5 rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900"
+            className="w-4 h-4 rounded border-gray-300 text-[#2c4c4e] focus:ring-[#2c4c4e]"
           />
-          <span className="text-sm text-neutral-600 group-hover:text-neutral-900 transition-colors">
+          <span className="text-sm text-gray-700">
             Save this information for next time
           </span>
         </label>
@@ -72,34 +84,23 @@ export const DeliverySection = ({ register }: { register: any }) => {
 };
 
 export const PaymentSection = ({ watch, setValue }: { watch: any, setValue: any }) => {
-  const paymentMethod = watch('paymentMethod', 'COD');
-
+  // We don't use 'watch' here to prevent parent re-renders 
+  // since this is a static selection for now.
   return (
-    <section className="space-y-6 pt-10">
-      <div>
-        <h2 className="text-xl font-bold text-neutral-900">Payment</h2>
-        <p className="text-xs text-neutral-400 mt-1">All transactions are secure and encrypted.</p>
+    <section className="mt-8">
+      <div className="mb-4">
+        <h2 className="text-xl font-bold text-gray-900">Payment</h2>
+        <p className="text-sm text-gray-500">All transactions are secure and encrypted.</p>
       </div>
       
+      {/* Cash Box Selection */}
       <div 
-        onClick={() => setValue('paymentMethod', 'COD')}
-        className={`p-6 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
-          paymentMethod === 'COD' 
-            ? 'border-neutral-900 bg-neutral-50' 
-            : 'border-neutral-100 bg-white hover:border-neutral-200'
-        }`}
+        className="border-2 border-[#2c4c4e] rounded-xl bg-[#f8fafa] p-6 w-full flex flex-col items-center justify-center cursor-default"
       >
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-neutral-100 rounded-full flex items-center justify-center text-neutral-900">
-            <Coins className="w-6 h-6" />
-          </div>
-          <span className="font-bold text-neutral-900">Cash on Delivery (COD)</span>
+        <div className="text-[#2c4c4e]">
+          <Coins className="w-8 h-8" />
         </div>
-        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-          paymentMethod === 'COD' ? 'border-neutral-900' : 'border-neutral-200'
-        }`}>
-          {paymentMethod === 'COD' && <div className="w-2.5 h-2.5 bg-neutral-900 rounded-full" />}
-        </div>
+        <span className="text-sm font-medium text-gray-900 mt-2">Cash</span>
       </div>
     </section>
   );
